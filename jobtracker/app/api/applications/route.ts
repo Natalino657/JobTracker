@@ -1,4 +1,4 @@
-let applications: any[] = [];
+import { applications } from "@/lib/applications-store";
 
 export async function GET() {
   return Response.json(applications);
@@ -7,14 +7,14 @@ export async function GET() {
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const newAplication = {
+  const newApplication = {
     id: crypto.randomUUID(),
     ...body,
   };
 
-  applications.push(newAplication);
+  applications.push(newApplication);
 
-  return Response.json(newAplication, {
+  return Response.json(newApplication, {
     status: 201,
   });
 }

@@ -21,11 +21,33 @@ export default function Home() {
     ]);
   };
 
+  const handleDeleteApplication = async (applicationId: string) => {
+    try {
+      const response = await fetch(`/api/applications/${applicationId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        console.log("Erro ao apagar candidatura");
+        return;
+      }
+
+      setApplications((currentApplications) =>
+        currentApplications.filter(
+          (application) => application.id !== applicationId,
+        ),
+      );
+    } catch (error) {}
+  };
+
   return (
     <main className="container mx-auto p-8">
       <h1 className="text-3xl font-bold mb-8">job Tracker</h1>
       <ApplicationForm onApplicationCreated={handleApplicationCreated} />
-      <ApplicationList applications={applications} />
+      <ApplicationList
+        applications={applications}
+        applicationToDelete={handleDeleteApplication}
+      />
     </main>
   );
 }

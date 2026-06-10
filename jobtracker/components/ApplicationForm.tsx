@@ -12,28 +12,54 @@ export default function ApplicationForm({
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
   const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const cleanForm = () => {
+    setCompany("");
+    setRole("");
+    setNotes("");
+  };
+
+  const sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
 
   const handleSubmit = async (e: any) => {
-    e.preventDefault();
+    try {
+      setIsSubmitting(true);
 
-    //console.log(company, role, notes);
+      //await sleep(1000);
 
-    const response = await fetch("/api/applications", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        company,
-        role,
-        notes,
-      }),
-    });
+      e.preventDefault();
 
-    const data = await response.json();
+      //console.log(company, role, notes);
 
-    console.log(data);
-    onApplicationCreated(data);
+      const response = await fetch("/api/applications", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          company,
+          role,
+          notes,
+        }),
+      });
+      if (!response.ok) {
+        console.log("erro ao criar Candidatura");
+        return;
+      }
+
+      const data = await response.json();
+
+      console.log(data);
+      onApplicationCreated(data);
+      cleanForm();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -71,7 +97,9 @@ export default function ApplicationForm({
         </Field>
 
         <Field orientation="horizontal">
-          <Button type="submit">Guardar</Button>
+          <Button disabled={isSubmitting} type="submit">
+            {isSubmitting ? "A aguardar..." : "Guardar"}
+          </Button>
         </Field>
       </FieldGroup>
     </form>

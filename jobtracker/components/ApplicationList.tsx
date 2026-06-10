@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Application } from "@/types/application";
+import { ApplicationListProps } from "@/types/applicationListProps";
+import { Button } from "./ui/button";
 
 // type Application = {
 //   id: string;
@@ -9,12 +11,9 @@ import { Application } from "@/types/application";
 //   notes: string;
 // };
 
-type ApplicationListProps = {
-  applications: Application[];
-};
-
 export default function ApplicationList({
   applications,
+  applicationToDelete,
 }: ApplicationListProps) {
   //const [applications, setApplications] = useState<Application[]>([]);
 
@@ -33,6 +32,13 @@ export default function ApplicationList({
           <h3>{application.company}</h3>
           <p>{application.role}</p>
           <p>{application.notes}</p>
+          <Button
+            onClick={() => {
+              applicationToDelete(application.id);
+            }}
+          >
+            Apagar
+          </Button>
         </div>
       ))}
     </div>
