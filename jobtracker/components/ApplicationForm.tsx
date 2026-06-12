@@ -25,12 +25,11 @@ export default function ApplicationForm({
   };
 
   const handleSubmit = async (e: any) => {
+    e.preventDefault();
     try {
       setIsSubmitting(true);
 
       //await sleep(1000);
-
-      e.preventDefault();
 
       //console.log(company, role, notes);
 
@@ -43,6 +42,7 @@ export default function ApplicationForm({
           company,
           role,
           notes,
+          status: "Applied",
         }),
       });
       if (!response.ok) {
