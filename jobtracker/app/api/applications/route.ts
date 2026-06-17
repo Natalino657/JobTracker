@@ -7,6 +7,8 @@ export async function GET() {
 export async function POST(request: Request) {
   const body = await request.json();
 
+  console.log("inside POST log", body);
+
   const newApplication = {
     id: crypto.randomUUID(),
     ...body,

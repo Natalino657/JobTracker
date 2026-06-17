@@ -48,29 +48,57 @@ export default function Home() {
     } catch (error) {}
   };
 
-  const handleAdvenceStatus = (applicationId: string) => {
-    const updatedApplications = applications.map((application) => {
-      if (application.id !== applicationId) {
-        return application;
+  const handleAdvanceStatus = async (applicationId: string) => {
+    const applicationToUpdate = applications.find(
+      (application) => application.id === applicationId,
+    );
+
+    if (!applicationToUpdate) return;
+
+    const currentIndex = statusOrder.findIndex(
+      (status) => status === applicationToUpdate.status,
+    );
+
+    if (currentIndex === statusOrder.length - 1) {
+      return;
+    }
+
+    const nextStatus = statusOrder[currentIndex + 1];
+
+    try {
+      const response = await fetch(`/api/applications/${applicationId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: nextStatus,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro ao tentar atualizar o estado${response.status}`);
       }
-      const currentIndex = statusOrder.findIndex(
-        (status) => status === application.status,
+
+      console.log("Dados atualizados com sucesso:", await response.json());
+
+      setApplications((currentApplications) =>
+        currentApplications.map((application) => {
+          if (application.id !== applicationId) {
+            return application;
+          }
+
+          return {
+            ...application,
+            status: nextStatus,
+          };
+        }),
       );
-
-      if (currentIndex === statusOrder.length - 1) {
-        return application;
-      }
-
-      const nextStatus = statusOrder[currentIndex + 1];
-
-      return {
-        ...application,
-        status: nextStatus,
-      };
-    });
-    setApplications(updatedApplications);
+    } catch (error) {
+      console.error("Erro:", error);
+    }
   };
-  console.log(applications);
+
   return (
     <main className="container mx-auto p-8">
       <h1 className="text-3xl font-bold mb-8">job Tracker</h1>
@@ -78,7 +106,7 @@ export default function Home() {
       <ApplicationList
         applications={applications}
         applicationToDelete={handleDeleteApplication}
-        onAdvanceStatus={handleAdvenceStatus}
+        onAdvanceStatus={handleAdvanceStatus}
       />
     </main>
   );
