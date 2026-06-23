@@ -1,5 +1,3 @@
-import { applications } from "@/lib/applications-store";
-
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {

@@ -1,5 +1,5 @@
-import { deleteApplication, updateApplication } from "@/lib/applications-store";
 import { ApplicationStatus } from "@/types/application";
+import { prisma } from "@/lib/prisma";
 
 export async function DELETE(
   request: Request,
@@ -9,7 +9,11 @@ export async function DELETE(
 ) {
   const { id } = await context.params;
 
-  deleteApplication(id);
+  await prisma.application.delete({
+    where: {
+      id,
+    },
+  });
 
   return Response.json({ message: "Application deleted" });
 }
@@ -23,7 +27,10 @@ export async function PATCH(
   const { id } = await context.params;
   const body = (await request.json()) as { status: ApplicationStatus };
 
-  updateApplication(id, body.status);
+  const updatedApplication = await prisma.application.update({
+    where: { id },
+    data: { status: body.status },
+  });
 
-  return Response.json({ message: `Application updated : ${body.status}` });
+  return Response.json(updatedApplication);
 }
