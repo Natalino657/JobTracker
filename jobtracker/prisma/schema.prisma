@@ -17,6 +17,6 @@ model Application {
   company String
   role String
   status String
-  note String
+  notes String?
   createdAt DateTime @default(now())
 }
