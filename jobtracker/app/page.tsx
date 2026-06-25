@@ -1,14 +1,28 @@
 "use client";
-import Image from "next/image";
+
 import ApplicationForm from "@/components/ApplicationForm";
 import ApplicationList from "@/components/ApplicationList";
 import { Application } from "@/types/application";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const [applications, setApplications] = useState<Application[]>([]);
 
+  const [selectedStatus, setSelectedStatus] = useState<
+    "All" | Application["status"]
+  >("All");
+
   const statusOrder = [
+    "Applied",
+    "Interview",
+    "Technical Interview",
+    "Offer",
+    "Rejected",
+  ] as const;
+
+  const statusFilters = [
+    "All",
     "Applied",
     "Interview",
     "Technical Interview",
@@ -99,12 +113,34 @@ export default function Home() {
     }
   };
 
+  const filteredApplications =
+    selectedStatus === "All"
+      ? applications
+      : applications.filter(
+          (application) => application.status === selectedStatus,
+        );
+
   return (
     <main className="container mx-auto p-8">
       <h1 className="text-3xl font-bold mb-8">job Tracker</h1>
       <ApplicationForm onApplicationCreated={handleApplicationCreated} />
+
+      <div className="flex flex-wrap gap-2 mb-6">
+        {statusFilters.map((status) => (
+          <Button
+            key={status}
+            variant={selectedStatus === status ? "default" : "outline"}
+            onClick={() => setSelectedStatus(status)}
+          >
+            {status}
+          </Button>
+        ))}
+      </div>
+      <p className="text-sm text-muted-foreground mb-4">
+        {filteredApplications.length} candidatura(s) encontrada(s)
+      </p>
       <ApplicationList
-        applications={applications}
+        applications={filteredApplications}
         applicationToDelete={handleDeleteApplication}
         onAdvanceStatus={handleAdvanceStatus}
       />
