@@ -26,22 +26,31 @@ export default function ApplicationList({
         return "secondary";
     }
   }
+
+  if (applications.length === 0) {
+    return (
+      <div>
+        <h2>Candidaturas</h2>
+
+        <p>
+          {selectedStatus === "All"
+            ? "Ainda não tens candidaturas."
+            : `Não existem candidaturas no estado "${selectedStatus}".`}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <h2>Candidaturas</h2>
-
-      {applications.length === 0 ? (
-        selectedStatus === "All" ? (
-          <p>Nenhuma condidatura encontrada</p>
-        ) : selectedStatus === "Interview" ? (
-          <p>Nenhuma condidatura Interview encontrada</p>
-        ) : (
-          <p>Nenhuma condidatura </p>
-        )
-      ) : (
-        applications.map((application: Application) => (
-          <div className="space-y-2 rounded-lg border p-4" key={application.id}>
-            <div className="space-y-3 rounded-lg border p-4">
+      <h2 className="mb-4">Candidaturas</h2>
+      <div className="space-y-4">
+        {applications.map((application) => (
+          <div
+            className="space-y-2 rounded-lg border p-4 "
+            key={application.id}
+          >
+            <div className="space-y-3 ">
               <div>
                 <h3 className="text-lg font-semibold">{application.company}</h3>
 
@@ -59,8 +68,13 @@ export default function ApplicationList({
               </Badge>
             </div>
             <div className="flex gap-2">
-              <Button onClick={() => onAdvanceStatus(application.id)}>
-                Avançar estado
+              <Button
+                disabled={application.status === "Rejected"}
+                onClick={() => onAdvanceStatus(application.id)}
+              >
+                {application.status === "Rejected"
+                  ? "Estado final"
+                  : "Avançar estado"}
               </Button>
 
               <Button
@@ -71,8 +85,8 @@ export default function ApplicationList({
               </Button>
             </div>
           </div>
-        ))
-      )}
+        ))}
+      </div>
     </div>
   );
 }
