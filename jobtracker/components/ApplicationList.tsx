@@ -8,6 +8,7 @@ export default function ApplicationList({
   applications,
   applicationToDelete,
   onAdvanceStatus,
+  selectedStatus,
 }: ApplicationListProps) {
   function getStatusVariant(status: Application["status"]) {
     switch (status) {
@@ -29,39 +30,49 @@ export default function ApplicationList({
     <div>
       <h2>Candidaturas</h2>
 
-      {applications.map((application: Application) => (
-        <div className="space-y-2 rounded-lg border p-4" key={application.id}>
-          <div className="space-y-3 rounded-lg border p-4">
-            <div>
-              <h3 className="text-lg font-semibold">{application.company}</h3>
+      {applications.length === 0 ? (
+        selectedStatus === "All" ? (
+          <p>Nenhuma condidatura encontrada</p>
+        ) : selectedStatus === "Interview" ? (
+          <p>Nenhuma condidatura Interview encontrada</p>
+        ) : (
+          <p>Nenhuma condidatura </p>
+        )
+      ) : (
+        applications.map((application: Application) => (
+          <div className="space-y-2 rounded-lg border p-4" key={application.id}>
+            <div className="space-y-3 rounded-lg border p-4">
+              <div>
+                <h3 className="text-lg font-semibold">{application.company}</h3>
 
-              <p className="text-sm text-muted-foreground">
-                {application.role}
-              </p>
+                <p className="text-sm text-muted-foreground">
+                  {application.role}
+                </p>
+              </div>
+
+              {application.notes && (
+                <p className="text-sm">{application.notes}</p>
+              )}
+
+              <Badge variant={getStatusVariant(application.status)}>
+                {application.status}
+              </Badge>
             </div>
+            <div className="flex gap-2">
+              <Button onClick={() => onAdvanceStatus(application.id)}>
+                Avançar estado
+              </Button>
 
-            {application.notes && (
-              <p className="text-sm">{application.notes}</p>
-            )}
-
-            <Badge variant={getStatusVariant(application.status)}>
-              {application.status}
-            </Badge>
+              <Button
+                variant="destructive"
+                onClick={() => applicationToDelete(application.id)}
+              >
+                Apagar
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button onClick={() => onAdvanceStatus(application.id)}>
-              Avançar estado
-            </Button>
-
-            <Button
-              variant="destructive"
-              onClick={() => applicationToDelete(application.id)}
-            >
-              Apagar
-            </Button>
-          </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }

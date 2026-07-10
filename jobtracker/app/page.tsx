@@ -143,6 +143,7 @@ export default function Home() {
         applications={filteredApplications}
         applicationToDelete={handleDeleteApplication}
         onAdvanceStatus={handleAdvanceStatus}
+        selectedStatus={selectedStatus}
       />
     </main>
   );
