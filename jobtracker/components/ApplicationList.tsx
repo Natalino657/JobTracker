@@ -9,6 +9,7 @@ export default function ApplicationList({
   applicationToDelete,
   onAdvanceStatus,
   selectedStatus,
+  searchTerm,
 }: ApplicationListProps) {
   function getStatusVariant(status: Application["status"]) {
     switch (status) {
@@ -28,17 +29,27 @@ export default function ApplicationList({
   }
 
   if (applications.length === 0) {
-    return (
-      <div>
-        <h2>Candidaturas</h2>
+    if (searchTerm === "") {
+      return (
+        <div>
+          <h2>Candidaturas</h2>
 
-        <p>
-          {selectedStatus === "All"
-            ? "Ainda não tens candidaturas."
-            : `Não existem candidaturas no estado "${selectedStatus}".`}
-        </p>
-      </div>
-    );
+          <p>
+            {selectedStatus === "All"
+              ? "Ainda não tens candidaturas."
+              : `Não existem candidaturas no estado "${selectedStatus}".`}
+          </p>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h2>Candidaturas</h2>
+
+          <p>Nenhuma candidatura encontrada para "{searchTerm}".</p>
+        </div>
+      );
+    }
   }
 
   return (

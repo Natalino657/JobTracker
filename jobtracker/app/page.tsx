@@ -5,10 +5,12 @@ import ApplicationList from "@/components/ApplicationList";
 import { Application } from "@/types/application";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import Searchbar from "@/components/Searchbar";
 
 export default function Home() {
-  const [applications, setApplications] = useState<Application[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
+  const [applications, setApplications] = useState<Application[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<
     "All" | Application["status"]
   >("All");
@@ -113,16 +115,29 @@ export default function Home() {
     }
   };
 
-  const filteredApplications =
-    selectedStatus === "All"
-      ? applications
-      : applications.filter(
-          (application) => application.status === selectedStatus,
-        );
+  const onSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+
+  // const filteredApplications =
+  //   selectedStatus === "All"
+  //     ? applications
+  //     : applications.filter(
+  //         (application) => application.status === selectedStatus,
+  //       );
+
+  const filteredApplications = applications.filter((application) => {
+    return (
+      (selectedStatus === "All" || application.status === selectedStatus) &&
+      (application.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        application.role.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  });
 
   return (
     <main className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8">job Tracker</h1>
+      <h1 className="text-3xl font-bold mb-8">Job Tracker</h1>
+      <Searchbar onSearchChange={onSearchChange} />
       <ApplicationForm onApplicationCreated={handleApplicationCreated} />
 
       <div className="flex flex-wrap gap-2 mb-6">
@@ -144,6 +159,7 @@ export default function Home() {
         applicationToDelete={handleDeleteApplication}
         onAdvanceStatus={handleAdvanceStatus}
         selectedStatus={selectedStatus}
+        searchTerm={searchTerm}
       />
     </main>
   );
