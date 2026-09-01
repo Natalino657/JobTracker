@@ -29,7 +29,7 @@ export default function ApplicationList({
   }
 
   if (applications.length === 0) {
-    if (searchTerm === "") {
+    if (!searchTerm) {
       return (
         <div>
           <h2>Candidaturas</h2>

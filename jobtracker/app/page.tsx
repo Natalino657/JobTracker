@@ -6,6 +6,8 @@ import { Application } from "@/types/application";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Searchbar from "@/components/Searchbar";
+import { Sort } from "@/types/sortType";
+import { SortSelector } from "@/components/SortSelector";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +16,7 @@ export default function Home() {
   const [selectedStatus, setSelectedStatus] = useState<
     "All" | Application["status"]
   >("All");
+  const [sortOption, setSortOption] = useState<Sort>("Mais recentes");
 
   const statusOrder = [
     "Applied",
@@ -30,6 +33,15 @@ export default function Home() {
     "Technical Interview",
     "Offer",
     "Rejected",
+  ] as const;
+
+  const orderOptions = [
+    "Mais recentes",
+    "Mais antigas",
+    "Empresa A-Z",
+    "Empresa Z-A",
+    "Cargo A-Z",
+    "Cargo Z-A",
   ] as const;
 
   useEffect(() => {
@@ -151,6 +163,13 @@ export default function Home() {
           </Button>
         ))}
       </div>
+
+      <SortSelector
+        sortOption={sortOption}
+        onSortChange={setSortOption}
+        options={orderOptions}
+      />
+
       <p className="text-sm text-muted-foreground mb-4">
         {filteredApplications.length} candidatura(s) encontrada(s)
       </p>
