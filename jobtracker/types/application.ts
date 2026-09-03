@@ -11,4 +11,5 @@ export type Application = {
   role: string;
   status: ApplicationStatus;
   notes?: string;
+  createdAt: string;
 };

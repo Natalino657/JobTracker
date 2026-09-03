@@ -9,6 +9,39 @@ import Searchbar from "@/components/Searchbar";
 import { Sort } from "@/types/sortType";
 import { SortSelector } from "@/components/SortSelector";
 
+function sortApplications(applications: Application[], SortOption: Sort) {
+  const sorted = [...applications];
+
+  switch (SortOption) {
+    case "Mais recentes":
+      return sorted.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+    case "Mais antigas":
+      return sorted.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      );
+    case "Empresa A-Z":
+      return sorted.sort((a, b) =>
+        a.company.toLowerCase().localeCompare(b.company.toLowerCase()),
+      );
+    case "Empresa Z-A":
+      return sorted.sort((a, b) =>
+        b.company.toLowerCase().localeCompare(a.company.toLowerCase()),
+      );
+    case "Cargo A-Z":
+      return sorted.sort((a, b) =>
+        a.role.toLowerCase().localeCompare(b.role.toLowerCase()),
+      );
+    case "Cargo Z-A":
+      return sorted.sort((a, b) =>
+        a.role.toLowerCase().localeCompare(b.role.toLowerCase()),
+      );
+  }
+}
+
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -138,13 +171,20 @@ export default function Home() {
   //         (application) => application.status === selectedStatus,
   //       );
 
+  const normalizedSearch = searchTerm.toLocaleLowerCase();
+
   const filteredApplications = applications.filter((application) => {
-    return (
-      (selectedStatus === "All" || application.status === selectedStatus) &&
-      (application.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        application.role.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    const matchesStatus =
+      selectedStatus === "All" || application.status === selectedStatus;
+
+    const matchesSearch =
+      application.company.toLowerCase().includes(normalizedSearch) ||
+      application.role.toLowerCase().includes(normalizedSearch);
+
+    return matchesStatus && matchesSearch;
   });
+
+  const sortedApplications = sortApplications(filteredApplications, sortOption);
 
   return (
     <main className="container mx-auto p-8">
@@ -174,7 +214,7 @@ export default function Home() {
         {filteredApplications.length} candidatura(s) encontrada(s)
       </p>
       <ApplicationList
-        applications={filteredApplications}
+        applications={sortedApplications}
         applicationToDelete={handleDeleteApplication}
         onAdvanceStatus={handleAdvanceStatus}
         selectedStatus={selectedStatus}
