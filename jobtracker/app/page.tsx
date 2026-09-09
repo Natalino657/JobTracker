@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import Searchbar from "@/components/Searchbar";
 import { Sort } from "@/types/sortType";
 import { SortSelector } from "@/components/SortSelector";
+import ApplicationStats from "@/components/ApplicationStats";
 
 function sortApplications(applications: Application[], SortOption: Sort) {
   const sorted = [...applications];
@@ -191,6 +192,8 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-8">Job Tracker</h1>
       <Searchbar onSearchChange={onSearchChange} />
       <ApplicationForm onApplicationCreated={handleApplicationCreated} />
+
+      <ApplicationStats applications={applications} />
 
       <div className="flex flex-wrap gap-2 mb-6">
         {statusFilters.map((status) => (
