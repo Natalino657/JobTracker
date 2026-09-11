@@ -1,10 +1,8 @@
 import { applicationStatsprops } from "@/types/applicationStatsprops";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -12,21 +10,26 @@ import {
 export default function ApplicationStats({
   applications,
 }: applicationStatsprops) {
-  const interviewApplications = applications.filter(
-    (application) => application.status === "Interview",
-  ).length;
-
-  const technicalInterviewApplications = applications.filter(
-    (application) => application.status === "Technical Interview",
-  ).length;
-
-  const offerApplications = applications.filter(
-    (application) => application.status === "Offer",
-  ).length;
-
-  const rejectedApplications = applications.filter(
-    (application) => application.status === "Rejected",
-  ).length;
+  const statusCounts = applications.reduce(
+    (acc, application) => {
+      if (application.status === "Interview") {
+        acc.Interview += 1;
+      } else if (application.status === "Offer") {
+        acc.Offer += 1;
+      } else if (application.status === "Technical Interview") {
+        acc.TechnicalInterview += 1;
+      } else if (application.status === "Rejected") {
+        acc.Rejected += 1;
+      }
+      return acc;
+    },
+    {
+      Interview: 0,
+      TechnicalInterview: 0,
+      Offer: 0,
+      Rejected: 0,
+    },
+  );
 
   const stats = [
     {
@@ -37,29 +40,29 @@ export default function ApplicationStats({
     {
       title: "Entrevistas",
       description: "Candidaturas em entrevista",
-      value: interviewApplications,
+      value: statusCounts.Interview,
     },
     {
       title: "Entrevistas técnicas",
       description: "Candidaturas em entrevista técnica",
-      value: technicalInterviewApplications,
+      value: statusCounts.TechnicalInterview,
     },
     {
       title: "Propostas",
       description: "Propostas recebidas",
-      value: offerApplications,
+      value: statusCounts.Offer,
     },
     {
       title: "Rejeitadas",
       description: "Candidaturas rejeitadas",
-      value: rejectedApplications,
+      value: statusCounts.Rejected,
     },
   ];
 
   return (
-    <div className="flex flex-row gap-1 ">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
       {stats.map((stat) => (
-        <Card key={stat.title} className="w-full max-w-sm">
+        <Card key={stat.title} className="w-full ">
           <CardHeader>
             <CardTitle>{stat.title}</CardTitle>
             <CardDescription>{stat.description}</CardDescription>
@@ -69,55 +72,6 @@ export default function ApplicationStats({
           </CardContent>
         </Card>
       ))}
-      {/* <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Total</CardTitle>
-          <CardDescription>entrevistas</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>{applications.length}</p>
-        </CardContent>
-      </Card>
-
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>entrevistas</CardTitle>
-          <CardDescription>entrevistas feitas</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>{interviewApplications}</p>
-        </CardContent>
-      </Card>
-
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>entrevistas tecnicas</CardTitle>
-          <CardDescription>entrevistas feitas</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>{technicalInterviewApplications}</p>
-        </CardContent>
-      </Card>
-
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Propostas</CardTitle>
-          <CardDescription>entrevistas feitas</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>{offerApplications}</p>
-        </CardContent>
-      </Card>
-
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Rejeitadas</CardTitle>
-          <CardDescription>entrevistas feitas</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>{rejectedApplications}</p>
-        </CardContent>
-      </Card> */}
     </div>
   );
 }
