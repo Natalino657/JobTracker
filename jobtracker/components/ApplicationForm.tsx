@@ -78,7 +78,7 @@ export default function ApplicationForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <FieldGroup>
+      <FieldGroup className="mt-10 mb-7">
         <h1>Nova candidatura</h1>
 
         <Field>

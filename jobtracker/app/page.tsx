@@ -213,7 +213,7 @@ export default function Home() {
         options={orderOptions}
       />
 
-      <p className="text-sm text-muted-foreground mb-4">
+      <p className="text-sm text-muted-foreground mb-4 mt-4">
         {filteredApplications.length} candidatura(s) encontrada(s)
       </p>
       <ApplicationList
