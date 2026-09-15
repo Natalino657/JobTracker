@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Field, FieldGroup, FieldLabel } from "./ui/field";
 import { ApplicationFormProps } from "@/types/onApplicationFormProps";
+import { toast } from "react-toastify";
 
 export default function ApplicationForm({
   onApplicationCreated,
@@ -13,6 +14,10 @@ export default function ApplicationForm({
   const [role, setRole] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({
+    company: "",
+    role: "",
+  });
 
   const cleanForm = () => {
     setCompany("");
@@ -20,18 +25,25 @@ export default function ApplicationForm({
     setNotes("");
   };
 
-  const sleep = (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
-
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const companyIsEmpty = !company.trim();
+    const roleIsEmpty = !role.trim();
+    if (companyIsEmpty || roleIsEmpty) {
+      setErrors({
+        company: companyIsEmpty ? "O nome da empresa é obrigatório." : "",
+        role: roleIsEmpty ? "O cargo da empresa é obrigatório." : "",
+      });
+      return;
+    }
+
+    setErrors({
+      company: "",
+      role: "",
+    });
+
     try {
       setIsSubmitting(true);
-
-      //await sleep(1000);
-
-      //console.log(company, role, notes);
 
       const response = await fetch("/api/applications", {
         method: "POST",
@@ -46,7 +58,7 @@ export default function ApplicationForm({
         }),
       });
       if (!response.ok) {
-        console.log("erro ao criar Candidatura");
+        toast.error("Erro ao criar candidatura");
         return;
       }
 
@@ -55,8 +67,10 @@ export default function ApplicationForm({
       console.log(data);
       onApplicationCreated(data);
       cleanForm();
+      toast.success("Candidatura criada com sucesso!");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Ocorreu um erro inesperado");
     } finally {
       setIsSubmitting(false);
     }
@@ -73,8 +87,19 @@ export default function ApplicationForm({
             value={company}
             onChange={(e) => setCompany(e.target.value)}
             id="fieldgroup-companyName"
-            placeholder="Nome da empresa"
+            placeholder="Nome da empresa*"
+            aria-invalid={!!errors.company}
+            aria-describedby={errors.company ? "company-error" : undefined}
           ></Input>
+          {errors.company && (
+            <p
+              id="company-error"
+              role="alert"
+              className="text-sm text-destructive"
+            >
+              {errors.company}
+            </p>
+          )}
         </Field>
 
         <Field>
@@ -83,13 +108,25 @@ export default function ApplicationForm({
             value={role}
             onChange={(e) => setRole(e.target.value)}
             id="fieldgroup-cargo"
-            placeholder="Cargo a desempenhar"
+            placeholder="Cargo a desempenhar*"
+            aria-invalid={!!errors.role}
+            aria-describedby={errors.role ? "role-error" : undefined}
           ></Input>
+          {errors.role && (
+            <p
+              id="role-error"
+              role="alert"
+              className="text-sm text-destructive"
+            >
+              {errors.role}
+            </p>
+          )}
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="fieldgroup-cargo">Observações</FieldLabel>
+          <FieldLabel htmlFor="fieldgroup-notes">Observações</FieldLabel>
           <Textarea
+            id="fieldgroup-notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Observações"

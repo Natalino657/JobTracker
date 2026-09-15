@@ -62,7 +62,7 @@ export default function ApplicationStats({
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
       {stats.map((stat) => (
-        <Card key={stat.title} className="w-full ">
+        <Card key={stat.title} className="w-full">
           <CardHeader>
             <CardTitle>{stat.title}</CardTitle>
             <CardDescription>{stat.description}</CardDescription>
