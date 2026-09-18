@@ -5,4 +5,5 @@ export type ApplicationListProps = {
   onAdvanceStatus: (id: string) => void;
   selectedStatus: "All" | Application["status"];
   searchTerm: string;
+  deletingApplicationId: string | null;
 };

@@ -4,12 +4,25 @@ import { ApplicationListProps } from "@/types/applicationListProps";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 export default function ApplicationList({
   applications,
   applicationToDelete,
   onAdvanceStatus,
   selectedStatus,
   searchTerm,
+  deletingApplicationId,
 }: ApplicationListProps) {
   function getStatusVariant(status: Application["status"]) {
     switch (status) {
@@ -88,12 +101,31 @@ export default function ApplicationList({
                   : "Avançar estado"}
               </Button>
 
-              <Button
-                variant="destructive"
-                onClick={() => applicationToDelete(application.id)}
-              >
-                Apagar
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger
+                  render={<Button variant="destructive">Apagar</Button>}
+                />
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Apagar candidatura?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tens a certeza de que pretendes apagar a candidatura{" "}
+                      {application.company}? Esta ação não pode ser anulada.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      disabled={deletingApplicationId === application.id}
+                      onClick={() => applicationToDelete(application.id)}
+                    >
+                      {deletingApplicationId === application.id
+                        ? "A apagar..."
+                        : "Apagar"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         ))}

@@ -9,6 +9,7 @@ import Searchbar from "@/components/Searchbar";
 import { Sort } from "@/types/sortType";
 import { SortSelector } from "@/components/SortSelector";
 import ApplicationStats from "@/components/ApplicationStats";
+import { toast } from "react-toastify";
 
 function sortApplications(applications: Application[], SortOption: Sort) {
   const sorted = [...applications];
@@ -45,6 +46,10 @@ function sortApplications(applications: Application[], SortOption: Sort) {
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [deletingApplicationId, setDeletingApplicationId] = useState<
+    string | null
+  >(null);
 
   const [applications, setApplications] = useState<Application[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<
@@ -93,12 +98,13 @@ export default function Home() {
 
   const handleDeleteApplication = async (applicationId: string) => {
     try {
+      setDeletingApplicationId(applicationId);
       const response = await fetch(`/api/applications/${applicationId}`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
-        console.log("Erro ao apagar candidatura");
+        toast.error("Erro ao tentar apagar a candidatura");
         return;
       }
 
@@ -107,7 +113,14 @@ export default function Home() {
           (application) => application.id !== applicationId,
         ),
       );
-    } catch (error) {}
+
+      toast.success("A candidatura foi apagada com sucesso! ");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao tentar apagar a candidatura");
+    } finally {
+      setDeletingApplicationId(null);
+    }
   };
 
   const handleAdvanceStatus = async (applicationId: string) => {
@@ -222,6 +235,7 @@ export default function Home() {
         onAdvanceStatus={handleAdvanceStatus}
         selectedStatus={selectedStatus}
         searchTerm={searchTerm}
+        deletingApplicationId={deletingApplicationId}
       />
     </main>
   );

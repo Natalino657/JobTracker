@@ -27,8 +27,10 @@ export default function ApplicationForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const companyIsEmpty = !company.trim();
     const roleIsEmpty = !role.trim();
+
     if (companyIsEmpty || roleIsEmpty) {
       setErrors({
         company: companyIsEmpty ? "O nome da empresa é obrigatório." : "",
