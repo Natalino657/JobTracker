@@ -60,15 +60,19 @@ export default function ApplicationStats({
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5 mb-5">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
       {stats.map((stat) => (
-        <Card key={stat.title} className="w-full">
+        <Card key={stat.title} size="sm" className="w-full">
           <CardHeader>
-            <CardTitle>{stat.title}</CardTitle>
             <CardDescription>{stat.description}</CardDescription>
+            <CardTitle className="text-sm text-muted-foreground">
+              {stat.title}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>{stat.value}</p>
+            <p className="text-3xl font-semibold tracking-tight tabular-nums">
+              {stat.value}
+            </p>
           </CardContent>
         </Card>
       ))}

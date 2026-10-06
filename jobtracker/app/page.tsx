@@ -9,7 +9,9 @@ import Searchbar from "@/components/Searchbar";
 import { Sort } from "@/types/sortType";
 import { SortSelector } from "@/components/SortSelector";
 import ApplicationStats from "@/components/ApplicationStats";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "react-toastify";
+import { Briefcase } from "lucide-react";
 
 function sortApplications(applications: Application[], SortOption: Sort) {
   const sorted = [...applications];
@@ -46,7 +48,6 @@ function sortApplications(applications: Application[], SortOption: Sort) {
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [deletingApplicationId, setDeletingApplicationId] = useState<
     string | null
   >(null);
@@ -178,13 +179,6 @@ export default function Home() {
     setSearchTerm(value);
   };
 
-  // const filteredApplications =
-  //   selectedStatus === "All"
-  //     ? applications
-  //     : applications.filter(
-  //         (application) => application.status === selectedStatus,
-  //       );
-
   const normalizedSearch = searchTerm.toLocaleLowerCase();
 
   const filteredApplications = applications.filter((application) => {
@@ -201,42 +195,65 @@ export default function Home() {
   const sortedApplications = sortApplications(filteredApplications, sortOption);
 
   return (
-    <main className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8">Job Tracker</h1>
-      <Searchbar onSearchChange={onSearchChange} />
-      <ApplicationForm onApplicationCreated={handleApplicationCreated} />
+    <main className="relative mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <header className="mb-10 flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/25">
+              <Briefcase className="size-5" />
+            </span>
+            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+              Job Tracker
+            </h1>
+          </div>
+          <p className="max-w-xl text-sm text-muted-foreground sm:text-base">
+            Organiza as tuas candidaturas, acompanha o progresso e mantém tudo
+            num só lugar.
+          </p>
+        </div>
+        <ThemeToggle />
+      </header>
 
-      <ApplicationStats applications={applications} />
+      <div className="space-y-8">
+        <Searchbar onSearchChange={onSearchChange} />
+        <ApplicationForm onApplicationCreated={handleApplicationCreated} />
+        <ApplicationStats applications={applications} />
 
-      <div className="flex flex-wrap gap-2 mb-6">
-        {statusFilters.map((status) => (
-          <Button
-            key={status}
-            variant={selectedStatus === status ? "default" : "outline"}
-            onClick={() => setSelectedStatus(status)}
-          >
-            {status}
-          </Button>
-        ))}
+        <section className="space-y-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap gap-2">
+              {statusFilters.map((status) => (
+                <Button
+                  key={status}
+                  size="sm"
+                  variant={selectedStatus === status ? "default" : "outline"}
+                  onClick={() => setSelectedStatus(status)}
+                >
+                  {status}
+                </Button>
+              ))}
+            </div>
+            <SortSelector
+              sortOption={sortOption}
+              onSortChange={setSortOption}
+              options={orderOptions}
+            />
+          </div>
+
+          <p className="text-sm text-muted-foreground">
+            {filteredApplications.length} candidatura(s) encontrada(s)
+          </p>
+
+          <ApplicationList
+            applications={sortedApplications}
+            applicationToDelete={handleDeleteApplication}
+            onAdvanceStatus={handleAdvanceStatus}
+            selectedStatus={selectedStatus}
+            searchTerm={searchTerm}
+            deletingApplicationId={deletingApplicationId}
+          />
+        </section>
       </div>
-
-      <SortSelector
-        sortOption={sortOption}
-        onSortChange={setSortOption}
-        options={orderOptions}
-      />
-
-      <p className="text-sm text-muted-foreground mb-4 mt-4">
-        {filteredApplications.length} candidatura(s) encontrada(s)
-      </p>
-      <ApplicationList
-        applications={sortedApplications}
-        applicationToDelete={handleDeleteApplication}
-        onAdvanceStatus={handleAdvanceStatus}
-        selectedStatus={selectedStatus}
-        searchTerm={searchTerm}
-        deletingApplicationId={deletingApplicationId}
-      />
     </main>
   );
 }

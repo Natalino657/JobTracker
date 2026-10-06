@@ -20,12 +20,12 @@ export function SortSelector({
       value={sortOption}
       onValueChange={(value) => onSortChange(value as Sort)}
     >
-      <SelectTrigger className="w-full max-w-30">
+      <SelectTrigger className="w-full sm:w-48">
         <SelectValue placeholder="Ordenar por" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Ordernar por</SelectLabel>
+          <SelectLabel>Ordenar por</SelectLabel>
 
           {options.map((option) => (
             <SelectItem key={option} value={option}>
